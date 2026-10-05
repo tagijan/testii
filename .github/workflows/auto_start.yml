@@ -1,0 +1,29 @@
+name: Auto Start Server
+
+on:
+  schedule:
+    # اجرای خودکار هر ۱۵ دقیقه یک‌‌بار
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # امکان اجرای دستی
+
+jobs:
+  start-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Run Auto Start Script
+        env:
+          PREPARE_COOKIE: ${{ secrets.PREPARE_COOKIE }}
+        run: python auto_start.py
